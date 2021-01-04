@@ -1,0 +1,21 @@
+{
+  "name": "i18n-zh-en-webpack-plugin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "lodash": "^4.17.20",
+    "webpack": "^5.11.1"
+  }
+}
