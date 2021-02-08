@@ -7,6 +7,7 @@ const { differenceWith, isEqual, unset, merge } = require('lodash');
 const flattenObjectKeys = require('i18next-scanner/lib/flatten-object-keys').default;
 const omitEmptyObject = require('i18next-scanner/lib/omit-empty-object').default;
 const chalk = require('chalk');
+const { prepareLocaleSource } = require('./utils');
 
 let zhSource = {};
 let nsSourceMap = {};
@@ -89,9 +90,7 @@ function customFlush(done) {
       });
     }
 
-    const zhResource = require(`${localePath}/zh.json`);
-    const enResource = require(`${localePath}/en.json`);
-    let oldContent = lng === 'en' ? enResource : zhResource;
+    let oldContent = JSON.parse(fs.readFileSync(lng === 'en' ? `${localePath}/en.json` : `${localePath}/zh.json`, { encoding: 'utf-8' }));
 
     // 移除废弃的key
     if (removeUnusedKeys) {
@@ -167,10 +166,10 @@ function customTransform(file, enc, done) {
 const paths = ['./app/**/*.{js,jsx,ts,tsx}', '!./tools/', '!./app/locales/*.json'];
 
 module.exports = {
-  writeLocale: async (translatedSource, localeSourceData, sourcePath, ns) => {
+  writeLocale: async (translatedSource, sourcePath, ns) => {
     zhSource = translatedSource || {};
-    nsSourceMap = localeSourceData || {};
     localePath = sourcePath || '';
+    nsSourceMap = prepareLocaleSource(localePath) || {};
     const promise = new Promise((resolve) => {
       vfs.src(paths)
         .pipe(scanner(options(ns), customTransform, customFlush))
