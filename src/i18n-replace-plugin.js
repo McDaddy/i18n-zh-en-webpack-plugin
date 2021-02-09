@@ -20,6 +20,9 @@ function createTransformer() {
     const visitor = (node) => {
       if (ts.isSourceFile(node)) { // 如果是文件入口，开始遍历子节点
         fileName = node.fileName; // 记录下当前的文件名，如果有翻译内容，结束后自动重新save
+        if (fileName.includes('node_modules')) {
+          return node;
+        }
         return ts.visitEachChild(node, visitor, context);
       }
 
