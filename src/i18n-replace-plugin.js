@@ -41,10 +41,7 @@ function createTransformer() {
             const params = args.map((arg) => arg.text);
             const zhWord = params[0];
             const ns = params[1] || 'default';
-            const nsResources = nsSourceMap[ns];
-            if (!nsResources) {
-              throw new Error(`指定namespace：${ns} 不存在`);
-            }
+            const nsResources = nsSourceMap[ns] || {};
             const enWord = nsResources[zhWord];
             if (enWord) {
               let nsEnWord = enWord;

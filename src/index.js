@@ -7,10 +7,13 @@ const chalk = require('chalk');
 const translate = require('@vitalets/google-translate-api');
 const fs = require('fs');
 const i18nReplacePlugin = require('./i18n-replace-plugin');
+const { writeLocale } = require('./i18n-generate-locales');
 
 const eventHub = new EventEmitter();
 let localePath;
 let nsList;
+let include;
+let exclude;
 let translateTimeout = 5000;
 
 /**
@@ -45,6 +48,8 @@ exports.i18nReplacePlugin = (options) => {
   }
   localePath = options.localePath;
   nsList = options.ns;
+  include = options.include;
+  exclude = options.exclude;
   translateTimeout = options.timeout || 5000;
   return i18nReplacePlugin(eventHub, localePath)();
 };
@@ -113,12 +118,11 @@ if (process.env.NODE_ENV !== 'production') {
       const translatedWords = await doTranslate(waitingTranslatePoolCp);
       if (Object.keys(translatedWords).length > 0) {
         // 输出到locale资源文件
-        const { writeLocale } = require('./i18n-generate-locales');
-        await writeLocale(translatedWords, localePath, nsList);
+        await writeLocale(translatedWords, include,exclude, localePath, nsList);
         // 如果是删除了某个i18n.s 需要删除locale文件
         // 这里性能考虑暂时不去删除locale文件中不需要翻译，当下次有新的词需要翻译的时候就会自动删除
         eventHub.emit('onLocaleFileChange');
-        fileListCp.forEach((filePath) => {
+        fileListCp.forEach((filePath) => { // 为了强制刷新
           const content = fs.readFileSync(filePath, { encoding: 'utf-8' });
           fs.writeFile(filePath, content, () => {});
         });

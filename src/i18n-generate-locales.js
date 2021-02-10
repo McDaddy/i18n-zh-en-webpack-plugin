@@ -90,7 +90,8 @@ function customFlush(done) {
       });
     }
 
-    let oldContent = JSON.parse(fs.readFileSync(lng === 'en' ? `${localePath}/en.json` : `${localePath}/zh.json`, { encoding: 'utf-8' }));
+    const oldContentBuffer = fs.readFileSync(lng === 'en' ? `${localePath}/en.json` : `${localePath}/zh.json`, { encoding: 'utf-8' });
+    let oldContent = oldContentBuffer.length === 0 ? {} : JSON.parse(oldContentBuffer);
 
     // 移除废弃的key
     if (removeUnusedKeys) {
@@ -139,7 +140,7 @@ function customFlush(done) {
 
     fs.writeFileSync(lng === 'en' ? `${localePath}/en.json` : `${localePath}/zh.json`, JSON.stringify(output, null, resource.jsonIndent), 'utf8');
   }
-  console.log(chalk.green('  完成写入locale文件...'));
+  console.log(chalk.green('完成写入locale文件...'));
 
   done();
 }
@@ -163,13 +164,28 @@ function customTransform(file, enc, done) {
   done();
 }
 
-const paths = ['./app/**/*.{js,jsx,ts,tsx}', '!./tools/', '!./app/locales/*.json'];
+const FILE_EXTENSION = '/**/*.{js,jsx,ts,tsx}'
 
 module.exports = {
-  writeLocale: async (translatedSource, sourcePath, ns) => {
+  writeLocale: async (translatedSource, include, exclude, sourcePath, ns) => {
+    let paths = [`${process.cwd()}${FILE_EXTENSION}`];
+    if (Array.isArray(include)) {
+      paths = include.map(p => `${p}${FILE_EXTENSION}`);
+    } else if (typeof include === 'string') {
+      paths = [`${include}${FILE_EXTENSION}`];
+    }
+    if (exclude) {
+      let excludePaths = [];
+      if (Array.isArray(exclude)) {
+        excludePaths = exclude.map(p => `!${p}${FILE_EXTENSION}`);
+      } else if (typeof exclude === 'string') {
+        excludePaths = [`!${exclude}${FILE_EXTENSION}`]
+      }
+      paths = paths.concat(excludePaths);
+    }
     zhSource = translatedSource || {};
     localePath = sourcePath || '';
-    nsSourceMap = prepareLocaleSource(localePath) || {};
+    nsSourceMap = prepareLocaleSource(localePath);
     const promise = new Promise((resolve) => {
       vfs.src(paths)
         .pipe(scanner(options(ns), customTransform, customFlush))
