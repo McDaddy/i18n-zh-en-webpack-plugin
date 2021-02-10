@@ -51,7 +51,7 @@ exports.i18nReplacePlugin = (options) => {
   include = options.include;
   exclude = options.exclude;
   translateTimeout = options.timeout || 5000;
-  return i18nReplacePlugin(eventHub, localePath)();
+  return i18nReplacePlugin(eventHub, localePath)(exclude);
 };
 
 const fileList = [];
