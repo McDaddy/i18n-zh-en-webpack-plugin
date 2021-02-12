@@ -25,7 +25,6 @@ module.exports = {
             loader: "ts-loader",
             options: {
               transpileOnly: true,
-              happyPackMode: true,
               getCustomTransformers: () => ({
                 before: [ 
                   i18nReplacePlugin({

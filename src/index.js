@@ -77,19 +77,25 @@ const doTranslate = async (waitingTranslateList) => {
   const toTransList = Array.from(toTransSet);
 
   const promises = toTransList.map(async (word) => {
-    const result = await translate(word, {
-      // tld: 'zh-cn',
-      to: 'en',
-    });
-    return { zh: word, en: result.text };
+    try {
+      const result = await translate(word, {
+        // tld: 'zh-cn',
+        to: 'en',
+      });
+      return { zh: word, en: result.text };
+    } catch (error) {
+      console.log(chalk.red('翻译失败...' + error));
+      throw error;
+    }
   });
   const timeoutPromise = new Promise((resolve) => {
     setTimeout(() => {
       resolve('timeout');
     }, translateTimeout);
   });
-  // 如果翻译超时直接返回
-  const translatedList = await Promise.race([timeoutPromise, Promise.allSettled(promises)]);
+
+    // 如果翻译超时直接返回
+  const  translatedList = await Promise.race([timeoutPromise, Promise.allSettled(promises)]);
   if (translatedList === 'timeout') {
     console.log(chalk.red('翻译超时...下次修改文件后重试'));
     return {};
