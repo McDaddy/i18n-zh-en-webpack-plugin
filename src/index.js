@@ -14,7 +14,10 @@ let localePath;
 let nsList;
 let include;
 let exclude;
+let lowerCaseFirstLetter = true;
 let translateTimeout = 5000;
+let targetVariable = 'i18n';
+let customProps;
 
 /**
  * I18nPlugin 用于自动化处理国际化的webpack plugin
@@ -51,7 +54,10 @@ exports.i18nReplacePlugin = (options) => {
   include = options.include;
   exclude = options.exclude;
   translateTimeout = options.timeout || 5000;
-  return i18nReplacePlugin(eventHub, localePath)(exclude);
+  targetVariable = options.targetVariable || 'i18n';
+  lowerCaseFirstLetter = typeof options.lowerCaseFirstLetter === 'boolean' ? options.lowerCaseFirstLetter : true;
+  customProps = options.customProps || {}
+  return i18nReplacePlugin(eventHub, {localePath, targetVariable} )(exclude);
 };
 
 const fileList = [];
@@ -79,8 +85,9 @@ const doTranslate = async (waitingTranslateList) => {
   const promises = toTransList.map(async (word) => {
     try {
       const result = await translate(word, {
-        // tld: 'zh-cn',
+        tld: 'cn',
         to: 'en',
+        client: 'gtx'
       });
       return { zh: word, en: result.text };
     } catch (error) {
@@ -94,8 +101,8 @@ const doTranslate = async (waitingTranslateList) => {
     }, translateTimeout);
   });
 
-    // 如果翻译超时直接返回
-  const  translatedList = await Promise.race([timeoutPromise, Promise.allSettled(promises)]);
+  // 如果翻译超时直接返回
+  const translatedList = await Promise.race([timeoutPromise, Promise.allSettled(promises)]);
   if (translatedList === 'timeout') {
     console.log(chalk.red('翻译超时...下次修改文件后重试'));
     return {};
@@ -105,8 +112,11 @@ const doTranslate = async (waitingTranslateList) => {
   // 将翻译结果集合到一个对象中
   translatedList.filter((item) => item.status === 'fulfilled').forEach(({ value }) => {
     const { zh, en } = value;
-    const [first, ...rest] = en;
-    const enWord = filterInvalidWord(first.toLowerCase() + rest.join(''));
+    let enWord = en;
+    if (lowerCaseFirstLetter) {
+      const [first, ...rest] = en;
+      enWord = filterInvalidWord(first.toLowerCase() + rest.join(''));
+    }
     console.log(chalk.cyan(zh, ':', enWord));
     translatedWords[zh] = enWord;
   });
@@ -124,7 +134,7 @@ if (process.env.NODE_ENV !== 'production') {
       const translatedWords = await doTranslate(waitingTranslatePoolCp);
       if (Object.keys(translatedWords).length > 0) {
         // 输出到locale资源文件
-        await writeLocale(translatedWords, include,exclude, localePath, nsList);
+        await writeLocale(translatedWords, {include,exclude, localePath, ns: nsList, targetVariable, customProps});
         // 如果是删除了某个i18n.s 需要删除locale文件
         // 这里性能考虑暂时不去删除locale文件中不需要翻译，当下次有新的词需要翻译的时候就会自动删除
         eventHub.emit('onLocaleFileChange');

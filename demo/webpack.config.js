@@ -30,7 +30,9 @@ module.exports = {
                   i18nReplacePlugin({
                     ns: ['default', 'common', 'myNs'],
                     localePath: path.resolve(__dirname, './src/locales'),
-                    // include: [path.resolve(__dirname, "./src")],
+                    include: [path.resolve(__dirname, "./src")],
+                    lowerCaseFirstLetter: false,
+                    targetVariable: 'i18next'
                     // exclude: '/Users/chenweitao/work/GitHome/node-demo/src/webpack5/src/tree-shaking/module2.ts'
                   }),
                 ]

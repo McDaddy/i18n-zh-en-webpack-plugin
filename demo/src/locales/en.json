@@ -1,1 +1,8 @@
-{}
+{
+  "common": {},
+  "default": {},
+  "myNs": {
+    "Recover back": "Recover back",
+    "Switch language": "Switch language"
+  }
+}

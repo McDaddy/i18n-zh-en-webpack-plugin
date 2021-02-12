@@ -8,6 +8,7 @@ let eventHub;
 
 let nsSourceMap;
 let localePath;
+let targetVariable;
 
 function createTransformer(exclude) {
   nsSourceMap = prepareLocaleSource(localePath);
@@ -35,7 +36,7 @@ function createTransformer(exclude) {
           const { name, expression: identifierExpression } = expression;
           if (
             name.escapedText === 's' &&
-            identifierExpression.escapedText === 'i18n'
+            identifierExpression.escapedText === targetVariable
           ) {
             const { arguments: args } = callExpression;
             const params = args.map((arg) => arg.text);
@@ -82,8 +83,10 @@ function createTransformer(exclude) {
   };
 }
 
-module.exports = (eventEmitter, localePathInput) => {
-  localePath = localePathInput;
+module.exports = (eventEmitter, options) => {
+  const { localePath: lp, targetVariable: tv } = options;
+  localePath = lp;
+  targetVariable = tv;
   eventHub = eventEmitter;
   return createTransformer;
 };

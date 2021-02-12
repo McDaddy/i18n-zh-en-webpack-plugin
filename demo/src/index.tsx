@@ -5,7 +5,7 @@ import app_zhCN from "./locales/zh.json";
 import app_enUS from "./locales/en.json";
 
 const i18n = i18next;
-i18n.s = (zhWord: string, ns?: string) => zhWord;
+i18next.s = (zhWord: string, ns?: string) => zhWord;
 
 const Entry = () => {
   const [language, setLanguage] = React.useState("zh");
@@ -18,8 +18,8 @@ const Entry = () => {
 
   return (
     <div>
-      <p>{i18n.s("你好")}</p>
-      <button onClick={onSwitch}>切换语言</button>
+      <p>{i18next.s("恢复回来", 'myNs')}</p>
+      <button onClick={onSwitch}>{i18next.s("切换语言", 'myNs')}</button>
     </div>
   );
 };

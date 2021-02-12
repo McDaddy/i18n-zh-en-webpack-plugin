@@ -12,13 +12,13 @@ const { prepareLocaleSource } = require('./utils');
 let zhSource = {};
 let nsSourceMap = {};
 let localePath = '';
+let targetVariable;
 
 // See options at https://github.com/i18next/i18next-scanner#options
-const options = (ns) => ({
+const getOptions = (ns, customProps) => ({
   removeUnusedKeys: true,
   sort: true,
   func: { // 此配置不能改变
-    list: ['i18n.t'],
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
   },
   trans: { // 用于组件形式 i18next-react
@@ -34,8 +34,6 @@ const options = (ns) => ({
       sourceType: 'module', // defaults to 'module'
     },
   },
-  lngs: ['en', 'zh'], // 此配置不能改变
-  ns,
   defaultLng: 'en',
   defaultNs: 'default',
   defaultValue: '__NOT_TRANSLATED__',
@@ -49,6 +47,9 @@ const options = (ns) => ({
     prefix: '{{',
     suffix: '}}',
   },
+  ...customProps,
+  lngs: ['en', 'zh'], // 此配置不能改变
+  ns,
 });
 
 function revertObjectKV(obj) {
@@ -149,7 +150,7 @@ function customTransform(file, enc, done) {
   const { parser } = this;
   const content = fs.readFileSync(file.path, enc);
 
-  parser.parseFuncFromString(content, { list: ['i18n.s'] }, (zhWord, defaultValue) => {
+  parser.parseFuncFromString(content, { list: [`${targetVariable}.s`] }, (zhWord, defaultValue) => {
     // 不管有没有翻译过，都要扣出来
     const namespace = defaultValue.defaultValue || 'default';
     let enValue = zhSource[zhWord];
@@ -167,7 +168,9 @@ function customTransform(file, enc, done) {
 const FILE_EXTENSION = '/**/*.{js,jsx,ts,tsx}'
 
 module.exports = {
-  writeLocale: async (translatedSource, include, exclude, sourcePath, ns) => {
+  writeLocale: async (translatedSource, options) => {
+    const { include, exclude, localePath: sourcePath, ns, targetVariable: tv, customProps } = options
+    targetVariable = tv;
     let paths = [`${process.cwd()}${FILE_EXTENSION}`];
     if (Array.isArray(include)) {
       paths = include.map(p => `${p}${FILE_EXTENSION}`);
@@ -188,7 +191,7 @@ module.exports = {
     nsSourceMap = prepareLocaleSource(localePath);
     const promise = new Promise((resolve) => {
       vfs.src(paths)
-        .pipe(scanner(options(ns), customTransform, customFlush))
+        .pipe(scanner(getOptions(ns, customProps), customTransform, customFlush))
         .pipe(vfs.dest('./')).on('end', () => {
           resolve();
         });
