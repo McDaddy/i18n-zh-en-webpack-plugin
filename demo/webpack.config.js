@@ -1,41 +1,41 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { i18nReplacePlugin } = require('../src/index');
 
 const isProd = process.env.NODE_ENV === 'production';
 
 module.exports = {
-  mode:  isProd ? 'production': "development",
+  mode: isProd ? 'production' : 'development',
   devtool: false,
-  entry: "./src/index.tsx",
+  entry: './src/index.tsx',
   output: {
-    path: path.join(__dirname, "./public"),
-    filename: "[name].js",
+    path: path.join(__dirname, './public'),
+    filename: '[name].js',
   },
   resolve: {
-    extensions: [".js", ".jsx", ".tsx", ".ts", ".d.ts"],
+    extensions: ['.js', '.jsx', '.tsx', '.ts', '.d.ts'],
   },
   module: {
     rules: [
       {
         test: /\.(tsx?|jsx?)$/,
-        include: [path.resolve(__dirname, "./src")],
+        include: [path.resolve(__dirname, './src')],
         use: [
           {
-            loader: "ts-loader",
+            loader: 'ts-loader',
             options: {
               transpileOnly: true,
               getCustomTransformers: () => ({
-                before: [ 
+                before: [
                   i18nReplacePlugin({
                     ns: ['default', 'common', 'myNs'],
                     localePath: path.resolve(__dirname, './src/locales'),
-                    include: [path.resolve(__dirname, "./src")],
+                    include: [path.resolve(__dirname, './src')],
                     lowerCaseFirstLetter: false,
-                    targetVariable: 'i18next'
+                    targetVariable: 'i18next',
                     // exclude: '/Users/chenweitao/work/GitHome/node-demo/src/webpack5/src/tree-shaking/module2.ts'
                   }),
-                ]
+                ],
               }),
             },
           },
@@ -45,7 +45,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: "./index.html",
+      template: './index.html',
     }),
   ],
   devServer: {
@@ -62,7 +62,7 @@ module.exports = {
     ],
     watchOptions: {
       ignored: [
-        'node_modules', 'public'
+        'node_modules', 'public',
       ],
     },
     disableHostCheck: true,

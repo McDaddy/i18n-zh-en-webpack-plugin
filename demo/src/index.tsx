@@ -5,7 +5,7 @@ import app_zhCN from './locales/zh.json';
 import app_enUS from './locales/en.json';
 
 const i18n = i18next;
-i18next.s = (zhWord: string, ns?: string) => zhWord;
+i18next.s = (zhWord: string, _ns?: string) => zhWord;
 
 const Entry = () => {
   const [language, setLanguage] = React.useState('zh');

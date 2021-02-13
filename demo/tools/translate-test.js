@@ -9,13 +9,13 @@
 //   .catch((err) => {
 //     console.error(err);
 //   });
-const axios = require("axios");
+const axios = require('axios');
 
 const getTranslate = async () => {
-  const res = await axios.post("https://libretranslate.com/translate", {
-    q: "你妹的",
-    source: "zh",
-    target: "en",
+  const res = await axios.post('https://libretranslate.com/translate', {
+    q: '你妹的',
+    source: 'zh',
+    target: 'en',
   });
   console.log(res.data);
   return res;

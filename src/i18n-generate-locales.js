@@ -170,18 +170,11 @@ module.exports = {
     const { include, exclude, localePath: sourcePath, ns, targetVariable: tv, customProps } = options;
     targetVariable = tv;
     let paths = [`${process.cwd()}${FILE_EXTENSION}`];
-    if (Array.isArray(include)) {
+    if (include) {
       paths = include.map((p) => `${p}${FILE_EXTENSION}`);
-    } else if (typeof include === 'string') {
-      paths = [`${include}${FILE_EXTENSION}`];
     }
-    if (exclude) {
-      let excludePaths = [];
-      if (Array.isArray(exclude)) {
-        excludePaths = exclude.map((p) => `!${p}${FILE_EXTENSION}`);
-      } else if (typeof exclude === 'string') {
-        excludePaths = [`!${exclude}${FILE_EXTENSION}`];
-      }
+    if (exclude.length > 0) {
+      const excludePaths = exclude.map((p) => `!${p}${FILE_EXTENSION}`);
       paths = paths.concat(excludePaths);
     }
     zhSource = translatedSource || {};
