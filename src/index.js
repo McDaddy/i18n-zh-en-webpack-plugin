@@ -1,6 +1,3 @@
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable @typescript-eslint/no-require-imports */
 const { find } = require('lodash');
 const EventEmitter = require('events');
 const chalk = require('chalk');
@@ -14,9 +11,9 @@ let localePath;
 let nsList;
 let include;
 let exclude;
-let lowerCaseFirstLetter = true;
-let translateTimeout = 5000;
-let targetVariable = 'i18n';
+let lowerCaseFirstLetter;
+let translateTimeout;
+let targetVariable;
 let customProps;
 
 /**
@@ -51,13 +48,13 @@ exports.i18nReplacePlugin = (options) => {
   }
   localePath = options.localePath;
   nsList = options.ns;
-  include = options.include;
-  exclude = options.exclude;
+  include = Array.isArray(options.include) ? options.include : options.include ? [String(options.include)] : [];
+  exclude = Array.isArray(options.exclude) ? options.exclude : options.exclude ? [String(options.exclude)] : [];
   translateTimeout = options.timeout || 5000;
   targetVariable = options.targetVariable || 'i18n';
   lowerCaseFirstLetter = typeof options.lowerCaseFirstLetter === 'boolean' ? options.lowerCaseFirstLetter : true;
-  customProps = options.customProps || {}
-  return i18nReplacePlugin(eventHub, {localePath, targetVariable} )(exclude);
+  customProps = options.customProps || {};
+  return i18nReplacePlugin(eventHub, { localePath, targetVariable })(exclude);
 };
 
 const fileList = [];
@@ -87,11 +84,11 @@ const doTranslate = async (waitingTranslateList) => {
       const result = await translate(word, {
         tld: 'cn',
         to: 'en',
-        client: 'gtx'
+        client: 'gtx',
       });
       return { zh: word, en: result.text };
     } catch (error) {
-      console.log(chalk.red('翻译失败...' + error));
+      console.log(chalk.red(`翻译失败...${ error}`));
       throw error;
     }
   });
@@ -115,7 +112,7 @@ const doTranslate = async (waitingTranslateList) => {
     let enWord = en;
     if (lowerCaseFirstLetter) {
       const [first, ...rest] = en;
-      enWord = filterInvalidWord(first.toLowerCase() + rest.join(''));
+      enWord = filterInvalidWord(`${first.toLowerCase()}${rest.join('')}`);
     }
     console.log(chalk.cyan(zh, ':', enWord));
     translatedWords[zh] = enWord;
@@ -134,7 +131,7 @@ if (process.env.NODE_ENV !== 'production') {
       const translatedWords = await doTranslate(waitingTranslatePoolCp);
       if (Object.keys(translatedWords).length > 0) {
         // 输出到locale资源文件
-        await writeLocale(translatedWords, {include,exclude, localePath, ns: nsList, targetVariable, customProps});
+        await writeLocale(translatedWords, { include, exclude, localePath, ns: nsList, targetVariable, customProps });
         // 如果是删除了某个i18n.s 需要删除locale文件
         // 这里性能考虑暂时不去删除locale文件中不需要翻译，当下次有新的词需要翻译的时候就会自动删除
         eventHub.emit('onLocaleFileChange');

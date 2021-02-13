@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
-/* eslint-disable @typescript-eslint/no-var-requires */
 const ts = require('typescript');
 const { prepareLocaleSource } = require('./utils');
 
@@ -72,9 +70,9 @@ function createTransformer(exclude) {
         }
       }
 
-      if(node.getChildCount()) {
+      if (node.getChildCount()) {
         // 不匹配就返回原来的node，并且遍历，因为表达式里面可能嵌套i18n
-        return ts.visitEachChild(node, visitor, context)
+        return ts.visitEachChild(node, visitor, context);
       }
       return node;
     };

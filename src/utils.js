@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
-/* eslint-disable @typescript-eslint/no-var-requires */
 const { invert } = require('lodash');
 const fs = require('fs');
 const path = require('path');
@@ -14,7 +12,7 @@ const prepareLocaleSource = (localePath) => {
     return nsSourceMap;
   }
   const zhResource = JSON.parse(resource); // 不能用直接require因为要动态读
-  Object.keys(zhResource).forEach(namespaceKey => {
+  Object.keys(zhResource).forEach((namespaceKey) => {
     const nsResources = {};
     nsSourceMap[namespaceKey] = nsResources;
     // 当前namespace下所有翻译

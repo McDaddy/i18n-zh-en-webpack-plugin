@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable @typescript-eslint/no-require-imports */
 const scanner = require('i18next-scanner');
 const vfs = require('vinyl-fs');
 const fs = require('fs');
@@ -165,24 +163,24 @@ function customTransform(file, enc, done) {
   done();
 }
 
-const FILE_EXTENSION = '/**/*.{js,jsx,ts,tsx}'
+const FILE_EXTENSION = '/**/*.{js,jsx,ts,tsx}';
 
 module.exports = {
   writeLocale: async (translatedSource, options) => {
-    const { include, exclude, localePath: sourcePath, ns, targetVariable: tv, customProps } = options
+    const { include, exclude, localePath: sourcePath, ns, targetVariable: tv, customProps } = options;
     targetVariable = tv;
     let paths = [`${process.cwd()}${FILE_EXTENSION}`];
     if (Array.isArray(include)) {
-      paths = include.map(p => `${p}${FILE_EXTENSION}`);
+      paths = include.map((p) => `${p}${FILE_EXTENSION}`);
     } else if (typeof include === 'string') {
       paths = [`${include}${FILE_EXTENSION}`];
     }
     if (exclude) {
       let excludePaths = [];
       if (Array.isArray(exclude)) {
-        excludePaths = exclude.map(p => `!${p}${FILE_EXTENSION}`);
+        excludePaths = exclude.map((p) => `!${p}${FILE_EXTENSION}`);
       } else if (typeof exclude === 'string') {
-        excludePaths = [`!${exclude}${FILE_EXTENSION}`]
+        excludePaths = [`!${exclude}${FILE_EXTENSION}`];
       }
       paths = paths.concat(excludePaths);
     }
