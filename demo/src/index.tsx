@@ -1,25 +1,28 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import i18next from 'i18next';
+// import i18next from 'i18next';
+import i18n from 'i18next';
 import app_zhCN from './locales/zh.json';
 import app_enUS from './locales/en.json';
 
-const i18n = i18next;
-i18next.s = (zhWord: string, _ns?: string) => zhWord;
+// @ts-ignore i18n.s
+i18n.s = (zhWords: string, _ns?: 'fdp') => zhWords;
+// @ts-ignore i18next.s
+// i18next.s = (zhWords: string, _ns?: 'fdp') => zhWords;
 
 const Entry = () => {
   const [language, setLanguage] = React.useState('zh');
 
   const onSwitch = () => {
     const toLocale = language === 'zh' ? 'en' : 'zh';
-    i18next.changeLanguage(toLocale);
+    i18n.changeLanguage(toLocale);
     setLanguage(toLocale);
   };
 
   return (
     <div>
-      <p>{i18next.s('恢复回来', 'myNs')}</p>
-      <button onClick={onSwitch}>{i18next.s('切换语言', 'myNs')}</button>
+      <p>{i18n.s('开心就好', 'myNs')}</p>
+      <button onClick={onSwitch}>{i18n.s('切换语言', 'myNs')}</button>
     </div>
   );
 };

@@ -32,8 +32,7 @@ module.exports = {
                     localePath: path.resolve(__dirname, './src/locales'),
                     include: [path.resolve(__dirname, './src')],
                     lowerCaseFirstLetter: false,
-                    targetVariable: 'i18next',
-                    // exclude: '/Users/chenweitao/work/GitHome/node-demo/src/webpack5/src/tree-shaking/module2.ts'
+                    // targetVariable: 'i18next',
                   }),
                 ],
               }),

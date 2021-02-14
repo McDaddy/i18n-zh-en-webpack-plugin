@@ -10,6 +10,7 @@
 - 与你现有的i18n语法兼容
 - Google Translate Api翻译准确率高
 
+
 ## 前提
 
 - 工程必须使用i18next作为国际化框架
@@ -17,11 +18,14 @@
 - 使用`ts-loader`
 - 只处理中文转英文的国际化
 
+
 ## 安装
 
 ```bash
 npm i @kuimo/i18n-webpack-plugin -D
 ```
+
+
 
 ## 快速开始
 
@@ -71,6 +75,32 @@ const title = i18n.s('标题', 'ns');
 ## 流程图
 
 ![i18n-plugin](https://kuimo-markdown-pic.oss-cn-hangzhou.aliyuncs.com/i18n-plugin.png)
+
+
+
+## 配置项
+
+- localePath `string` - （必填）多语言locale文件夹的绝对路径，请确保路径下有`zh.json`与`en.json`两个文件
+
+- ns `string[]` - 所有命名空间
+
+  默认： [‘default’]
+  
+- include `string | string[]` - 此插件无视在`ts-loader`中配置的include，建议手动配置
+
+默认： 当前执行命令的路径
+  
+- include `string | string[]` - 在include基础上，去除不需要的目录文件（不支持glob）
+
+  默认：[]
+
+- lowerCaseFirstLetter `boolean` - 是否需要强制把首字母小写
+
+   默认：`true`
+
+- targetVariable `string` - 匹配的表达式变量名
+
+   默认： `i18n`
 
 
 
