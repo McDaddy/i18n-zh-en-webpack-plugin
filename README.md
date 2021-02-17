@@ -1,6 +1,6 @@
-# i18n-webpack-plugin
+# ts-auto-i18n-plugin
 
-一个用于自动化处理国际化的webpack plugin
+一个用于自动化处理国际化的`ts-loader` plugin
 
 ## 特性
 
@@ -8,22 +8,34 @@
 - 命名空间管理
 - 源代码中以中文显现国际化内容更直观
 - 与你现有的i18n语法兼容
-- Google Translate Api翻译准确率高
+- Google Translate API 高翻译准确率
+
 
 
 ## 前提
 
-- 工程必须使用i18next作为国际化框架
+- 工程必须使用[i18next](https://www.npmjs.com/package/i18next)作为国际化框架
 - `typescript` 4.x
-- 使用`ts-loader`
+- 使用`ts-loader`作为代码转换loader
 - 只处理中文转英文的国际化
+
 
 
 ## 安装
 
 ```bash
-npm i @kuimo/i18n-webpack-plugin -D
+npm install ts-auto-i18n-plugin -D
 ```
+
+
+
+## DEMO
+
+1. fork 工程
+2. `cd demo`
+3. `npm install`
+4. `npm start`
+5. [localhost:8080](http://localhost:8080)
 
 
 
@@ -88,8 +100,8 @@ const title = i18n.s('标题', 'ns');
   
 - include `string | string[]` - 此插件无视在`ts-loader`中配置的include，建议手动配置
 
-默认： 当前执行命令的路径
-  
+  默认： 当前执行命令的路径
+
 - include `string | string[]` - 在include基础上，去除不需要的目录文件（不支持glob）
 
   默认：[]
@@ -102,9 +114,13 @@ const title = i18n.s('标题', 'ns');
 
    默认： `i18n`
 
+- apiKey `string` - 当不配置此项时，插件会调用免费的谷歌翻译库[@vitalets/google-translate-api](https://www.npmjs.com/package/@vitalets/google-translate-api)进行翻译，但在此情况下，无法保证翻译的稳定性，在同一网关调用多次翻译后可能会出现403/429等错误，表示被谷歌限制。建议使用者申请一个[Google Cloud](https://cloud.google.com/translate/docs/)的账号，每月50万字符的免费流量基本可以保障一个中大型前端应用使用。完成申请后创建一个API凭证，即API key，配置之后就可以无限翻译了。
 
 
-## 缺点
+
+## 注意
 
 1. 不支持带变量的国际化如 `i18n.t('add {name}', { name: i18n.t('caller') })`
 2. 不支持运行时的变量翻译 如： `i18n.s(x === 'x' ? '哈哈': '嘿嘿')` 或 `i18n.s(variable)`
+
+
