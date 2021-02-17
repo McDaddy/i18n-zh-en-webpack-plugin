@@ -41,7 +41,7 @@ let apiKey;
  *  4.5 直接修改locale文件无法直接使ts/js代码重新编译，需要手动重新save源代码生效
  * 5. 在生产打包模式下，不会自动翻译中文，根据locale文件将i18n.s转换成i18n.t
  */
-exports.AutoI18nPlugin = (options) => {
+const autoI18nPlugin = (options) => {
   if (!options || !options.localePath) {
     throw new Error('I18nPlugin -> options -> localePath不得为空！！！');
   }
@@ -172,3 +172,5 @@ if (process.env.NODE_ENV !== 'production') {
     }
   }, 5000);
 }
+
+module.exports = autoI18nPlugin;

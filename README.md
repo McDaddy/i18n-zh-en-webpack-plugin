@@ -102,7 +102,7 @@ const title = i18n.s('标题', 'ns');
 
   默认： 当前执行命令的路径
 
-- include `string | string[]` - 在include基础上，去除不需要的目录文件（不支持glob）
+- exclude `string | string[]` - 在include基础上，去除不需要的目录文件（不支持glob）
 
   默认：[]
 
