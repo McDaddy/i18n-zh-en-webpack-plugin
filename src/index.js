@@ -1,7 +1,8 @@
 const { find } = require('lodash');
 const EventEmitter = require('events');
 const chalk = require('chalk');
-const translate = require('@vitalets/google-translate-api');
+const freeTranslate = require('@vitalets/google-translate-api');
+const translate = require('translate');
 const fs = require('fs');
 const i18nReplacePlugin = require('./i18n-replace-plugin');
 const { writeLocale } = require('./i18n-generate-locales');
@@ -15,6 +16,7 @@ let lowerCaseFirstLetter;
 let translateTimeout;
 let targetVariable;
 let customProps;
+let apiKey;
 
 /**
  * I18nPlugin 用于自动化处理国际化的webpack plugin
@@ -39,7 +41,7 @@ let customProps;
  *  4.5 直接修改locale文件无法直接使ts/js代码重新编译，需要手动重新save源代码生效
  * 5. 在生产打包模式下，不会自动翻译中文，根据locale文件将i18n.s转换成i18n.t
  */
-exports.i18nReplacePlugin = (options) => {
+exports.AutoI18nPlugin = (options) => {
   if (!options || !options.localePath) {
     throw new Error('I18nPlugin -> options -> localePath不得为空！！！');
   }
@@ -54,6 +56,7 @@ exports.i18nReplacePlugin = (options) => {
   targetVariable = options.targetVariable || 'i18n';
   lowerCaseFirstLetter = typeof options.lowerCaseFirstLetter === 'boolean' ? options.lowerCaseFirstLetter : true;
   customProps = options.customProps || {};
+  apiKey = options.apiKey;
   return i18nReplacePlugin(eventHub, { localePath, targetVariable })(exclude);
 };
 
@@ -74,23 +77,49 @@ const filterInvalidWord = (enWord) => {
   return enWord.replace(/:/g, '&#58;');
 };
 
+const freeTranslateCall = async (word) => {
+  try {
+    const result = await freeTranslate(word, {
+      tld: 'cn',
+      to: 'en',
+      client: 'gtx',
+    });
+    return { zh: word, en: result.text };
+  } catch (error) {
+    console.log(chalk.red(`翻译失败...${ error}`));
+    throw error;
+  }
+};
+
+const translateCall = async (word) => {
+  try {
+    console.log(222);
+    const result = await translate(word, {
+      from: 'zh',
+      to: 'en',
+      engine: 'google',
+      key: apiKey,
+    });
+    return { zh: word, en: result };
+  } catch (error) {
+    console.log(chalk.red(`翻译失败...${ error}`));
+    throw error;
+  }
+};
+
 const doTranslate = async (waitingTranslateList) => {
   const toTransSet = new Set();
   waitingTranslateList.forEach(({ zhWord }) => toTransSet.add(zhWord));
   const toTransList = Array.from(toTransSet);
 
   const promises = toTransList.map(async (word) => {
-    try {
-      const result = await translate(word, {
-        tld: 'cn',
-        to: 'en',
-        client: 'gtx',
-      });
-      return { zh: word, en: result.text };
-    } catch (error) {
-      console.log(chalk.red(`翻译失败...${ error}`));
-      throw error;
+    let result;
+    if (apiKey) {
+      result = await translateCall(word);
+    } else {
+      result = await freeTranslateCall(word);
     }
+    return result;
   });
   const timeoutPromise = new Promise((resolve) => {
     setTimeout(() => {
