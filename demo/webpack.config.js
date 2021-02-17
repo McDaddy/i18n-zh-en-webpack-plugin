@@ -1,6 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { AutoI18nPlugin } = require('../src/index');
+const tsAutoI18nPlugin = require('../src/index');
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -27,7 +27,7 @@ module.exports = {
               transpileOnly: true,
               getCustomTransformers: () => ({
                 before: [
-                  AutoI18nPlugin({
+                  tsAutoI18nPlugin({
                     ns: ['default', 'common', 'myNs'],
                     localePath: path.resolve(__dirname, './src/locales'),
                     include: [path.resolve(__dirname, './src')],

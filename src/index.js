@@ -23,8 +23,7 @@ let apiKey;
  *
  * 前提：
  * 1. 工程必须使用i18next作为国际化框架
- * 2. 使用webpack 5构建工程
- * 3. 只处理中文转英文的国际化
+ * 2. 只处理中文转英文的国际化
  *
  * 使用方法：
  * 1. 不管有没有单独维护一个i18n.js/ts文件，保证给i18n这个导出对象添加一个.s的方法： i18n.s = (zhWords: string, ns?: string) => zhWords;
@@ -45,11 +44,9 @@ const autoI18nPlugin = (options) => {
   if (!options || !options.localePath) {
     throw new Error('I18nPlugin -> options -> localePath不得为空！！！');
   }
-  if (!options.ns) {
-    throw new Error('I18nPlugin -> options -> ns不得为空！！！');
-  }
+
   localePath = options.localePath;
-  nsList = options.ns;
+  nsList = options.ns || ['default'];
   include = Array.isArray(options.include) ? options.include : options.include ? [String(options.include)] : [];
   exclude = Array.isArray(options.exclude) ? options.exclude : options.exclude ? [String(options.exclude)] : [];
   translateTimeout = options.timeout || 5000;
@@ -93,7 +90,6 @@ const freeTranslateCall = async (word) => {
 
 const translateCall = async (word) => {
   try {
-    console.log(222);
     const result = await translate(word, {
       from: 'zh',
       to: 'en',
