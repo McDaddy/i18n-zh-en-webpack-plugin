@@ -1,17 +1,15 @@
 const ts = require('typescript');
-const { prepareLocaleSource } = require('./utils');
 
 const { factory } = ts;
 let eventHub;
 
 let nsSourceMap;
-let localePath;
 let targetVariable;
 
-function createTransformer(exclude) {
-  nsSourceMap = prepareLocaleSource(localePath);
-  eventHub.on('onLocaleFileChange', () => {
-    nsSourceMap = prepareLocaleSource(localePath);
+function createTransformer(sourceMap, exclude) {
+  nsSourceMap = sourceMap;
+  eventHub.on('onLocaleFileChange', (sm) => {
+    nsSourceMap = sm;
   });
 
   return (context) => {
@@ -81,8 +79,7 @@ function createTransformer(exclude) {
 }
 
 module.exports = (eventEmitter, options) => {
-  const { localePath: lp, targetVariable: tv } = options;
-  localePath = lp;
+  const { targetVariable: tv } = options;
   targetVariable = tv;
   eventHub = eventEmitter;
   return createTransformer;

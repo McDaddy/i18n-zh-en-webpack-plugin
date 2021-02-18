@@ -5,7 +5,6 @@ const { differenceWith, isEqual, unset, merge } = require('lodash');
 const flattenObjectKeys = require('i18next-scanner/lib/flatten-object-keys').default;
 const omitEmptyObject = require('i18next-scanner/lib/omit-empty-object').default;
 const chalk = require('chalk');
-const { prepareLocaleSource } = require('./utils');
 
 let zhSource = {};
 let nsSourceMap = {};
@@ -76,7 +75,7 @@ function customFlush(done) {
 
   for (let index = 0; index < Object.keys(resStore).length; index++) {
     const lng = Object.keys(resStore)[index];
-    const namespaces = resStore[lng];
+    const namespaces = resStore[lng]; // 所有被抠出来的英文key，对应的都是__not_translated，需要跟后面的source合并
     // 未翻译的英文的value和key保持一致
     if (lng === 'en') {
       Object.keys(namespaces).forEach((_ns) => {
@@ -151,11 +150,11 @@ function customTransform(file, enc, done) {
   parser.parseFuncFromString(content, { list: [`${targetVariable}.s`] }, (zhWord, defaultValue) => {
     // 不管有没有翻译过，都要扣出来
     const namespace = defaultValue.defaultValue || 'default';
+    const nsResource = nsSourceMap[namespace];
     let enValue = zhSource[zhWord];
     if (enValue) {
       parser.set(namespace ? `${namespace}:${enValue}` : enValue, '__NOT_TRANSLATED__');
     } else {
-      const nsResource = nsSourceMap[namespace];
       enValue = nsResource[zhWord];
       parser.set(namespace ? `${namespace}:${enValue}` : enValue, '__NOT_TRANSLATED__');
     }
@@ -166,7 +165,7 @@ function customTransform(file, enc, done) {
 const FILE_EXTENSION = '/**/*.{js,jsx,ts,tsx}';
 
 module.exports = {
-  writeLocale: async (translatedSource, options) => {
+  writeLocale: async (translatedSource, sourceMap, options) => {
     const { include, exclude, localePath: sourcePath, ns, targetVariable: tv, customProps } = options;
     targetVariable = tv;
     let paths = [`${process.cwd()}${FILE_EXTENSION}`];
@@ -179,7 +178,7 @@ module.exports = {
     }
     zhSource = translatedSource || {};
     localePath = sourcePath || '';
-    nsSourceMap = prepareLocaleSource(localePath);
+    nsSourceMap = sourceMap;
     const promise = new Promise((resolve) => {
       vfs.src(paths)
         .pipe(scanner(getOptions(ns, customProps), customTransform, customFlush))

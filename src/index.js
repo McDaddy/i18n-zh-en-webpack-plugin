@@ -1,4 +1,4 @@
-const { find } = require('lodash');
+const { find, get } = require('lodash');
 const EventEmitter = require('events');
 const chalk = require('chalk');
 const freeTranslate = require('@vitalets/google-translate-api');
@@ -6,6 +6,7 @@ const translate = require('translate');
 const fs = require('fs');
 const i18nReplacePlugin = require('./i18n-replace-plugin');
 const { writeLocale } = require('./i18n-generate-locales');
+const { prepareLocaleSource } = require('./utils');
 
 const eventHub = new EventEmitter();
 let localePath;
@@ -17,6 +18,7 @@ let translateTimeout;
 let targetVariable;
 let customProps;
 let apiKey;
+let nsSourceMap;
 
 /**
  * I18nPlugin 用于自动化处理国际化的webpack plugin
@@ -54,7 +56,8 @@ const autoI18nPlugin = (options) => {
   lowerCaseFirstLetter = typeof options.lowerCaseFirstLetter === 'boolean' ? options.lowerCaseFirstLetter : true;
   customProps = options.customProps || {};
   apiKey = options.apiKey;
-  return i18nReplacePlugin(eventHub, { localePath, targetVariable })(exclude);
+  nsSourceMap = prepareLocaleSource(localePath);
+  return i18nReplacePlugin(eventHub, { localePath, targetVariable })(nsSourceMap, exclude);
 };
 
 const fileList = [];
@@ -140,6 +143,11 @@ const doTranslate = async (waitingTranslateList) => {
       enWord = filterInvalidWord(`${first.toLowerCase()}${rest.join('')}`);
     }
     console.log(chalk.cyan(zh, ':', enWord));
+    const target = find(waitingTranslateList, { zhWord: zh });
+    if (get(nsSourceMap, [target.ns, en])) {
+      enWord = `${enWord}__CONFLICT__`;
+      console.log(chalk.red(`翻译结果与当前locale有冲突！翻译结果暂为：${enWord}，请手动处理冲突`));
+    }
     translatedWords[zh] = enWord;
   });
   return translatedWords;
@@ -156,10 +164,11 @@ if (process.env.NODE_ENV !== 'production') {
       const translatedWords = await doTranslate(waitingTranslatePoolCp);
       if (Object.keys(translatedWords).length > 0) {
         // 输出到locale资源文件
-        await writeLocale(translatedWords, { include, exclude, localePath, ns: nsList, targetVariable, customProps });
+        await writeLocale(translatedWords, nsSourceMap, { include, exclude, localePath, ns: nsList, targetVariable, customProps });
         // 如果是删除了某个i18n.s 需要删除locale文件
         // 这里性能考虑暂时不去删除locale文件中不需要翻译，当下次有新的词需要翻译的时候就会自动删除
-        eventHub.emit('onLocaleFileChange');
+        nsSourceMap = prepareLocaleSource(localePath);
+        eventHub.emit('onLocaleFileChange', nsSourceMap);
         fileListCp.forEach((filePath) => { // 为了强制刷新
           const content = fs.readFileSync(filePath, { encoding: 'utf-8' });
           fs.writeFile(filePath, content, () => {});
