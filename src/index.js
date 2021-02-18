@@ -1,4 +1,4 @@
-const { find, get } = require('lodash');
+const { find, get, invert } = require('lodash');
 const EventEmitter = require('events');
 const chalk = require('chalk');
 const freeTranslate = require('@vitalets/google-translate-api');
@@ -144,7 +144,7 @@ const doTranslate = async (waitingTranslateList) => {
     }
     console.log(chalk.cyan(zh, ':', enWord));
     const target = find(waitingTranslateList, { zhWord: zh });
-    if (get(nsSourceMap, [target.ns, en])) {
+    if (get(invert(get(nsSourceMap, target.ns)), enWord)) {
       enWord = `${enWord}__CONFLICT__`;
       console.log(chalk.red(`翻译结果与当前locale有冲突！翻译结果暂为：${enWord}，请手动处理冲突`));
     }
