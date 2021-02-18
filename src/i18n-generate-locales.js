@@ -131,8 +131,8 @@ function customFlush(done) {
       });
     }
 
-    if (isEqual(oldContent, output)) {
-      console.log(chalk.yellow(' locale内容无改动...'));
+    if (isEqual(oldContent, output) && (index + 1) === Object.keys(resStore).length) {
+      console.log(chalk.yellow('locale内容无改动...'));
       done();
       return;
     }
