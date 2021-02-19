@@ -4,19 +4,19 @@
 
 ## 特性
 
-- 🚀 自动化翻译中文到英文
+- 🚀 &nbsp; 自动化翻译中文到英文
 
-- 💼 自动化命名空间管理
+- 💼 &nbsp; 自动化命名空间管理
 
-- 🥽 源代码中以中文显现国际化内容更直观
+- 🥽 &nbsp; 源代码中以中文显现国际化内容更直观
 
-- 🤝 不影响你现有的i18n实现
+- 🤝 &nbsp; 不影响你现有的i18n实现
 
-- 🍻 Google Translate API 高翻译准确率
+- 🍻 &nbsp; Google Translate API 高翻译准确率
 
   
 
-![demo.gif](https://kuimo-markdown-pic.oss-cn-hangzhou.aliyuncs.com/Kapture 2021-02-19 at 17.16.59.gif)
+![demo.gif](demo.gif)
 
 ## 前提
 
