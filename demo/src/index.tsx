@@ -20,7 +20,7 @@ const Entry = () => {
 
   return (
     <div>
-      <p>{i18n.s('开心就好', 'myNs')}</p>
+      <p>{i18n.s('跑', 'myNs')}</p>
       <button onClick={onSwitch}>{i18n.s('切换语言', 'myNs')}</button>
     </div>
   );

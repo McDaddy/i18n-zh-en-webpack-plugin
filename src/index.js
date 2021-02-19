@@ -1,9 +1,9 @@
 const { find, get, invert } = require('lodash');
+const fs = require('fs');
 const EventEmitter = require('events');
 const chalk = require('chalk');
 const freeTranslate = require('@vitalets/google-translate-api');
 const translate = require('translate');
-const fs = require('fs');
 const i18nReplacePlugin = require('./i18n-replace-plugin');
 const { writeLocale } = require('./i18n-generate-locales');
 const { prepareLocaleSource } = require('./utils');
@@ -158,6 +158,7 @@ if (process.env.NODE_ENV !== 'production') {
     if (fileList.length > 0 && waitingTranslatePool.length > 0) {
       console.log(chalk.green('开始翻译...'));
       const fileListCp = [...fileList];
+      nsSourceMap = prepareLocaleSource(localePath);
       const waitingTranslatePoolCp = [...waitingTranslatePool];
       fileList.length = 0;
       waitingTranslatePool.length = 0;
