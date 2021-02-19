@@ -144,7 +144,8 @@ const doTranslate = async (waitingTranslateList) => {
     }
     console.log(chalk.cyan(zh, ':', enWord));
     const target = find(waitingTranslateList, { zhWord: zh });
-    if (get(invert(get(nsSourceMap, target.ns)), enWord)) {
+    const originalZhWord = get(invert(get(nsSourceMap, target.ns)), enWord); // 潜在的翻译结果相同，本来已经存在的中文
+    if (originalZhWord && originalZhWord !== zh) { // 存在且与当前不是同一个词
       enWord = `${enWord}__CONFLICT__`;
       console.log(chalk.red(`翻译结果与当前locale有冲突！翻译结果暂为：${enWord}，请手动处理冲突`));
     }
