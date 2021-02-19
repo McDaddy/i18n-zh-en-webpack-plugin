@@ -14,9 +14,9 @@
 
 - 🍻 &nbsp; Google Translate API 高翻译准确率
 
-  
 
-![demo.gif](demo.gif)
+
+![demo.gif](https://kuimo-markdown-pic.oss-cn-hangzhou.aliyuncs.com/Kapture 2021-02-19 at 17.16.59.gif)
 
 ## 前提
 
@@ -92,7 +92,7 @@ const title = i18n.s('标题', 'ns');
 
 ## 流程图
 
-![i18n-plugin](https://kuimo-markdown-pic.oss-cn-hangzhou.aliyuncs.com/i18n-plugin.png)
+![image-20210219175826813](https://kuimo-markdown-pic.oss-cn-hangzhou.aliyuncs.com/image-20210219175826813.png)
 
 
 
