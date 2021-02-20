@@ -16,7 +16,7 @@
 
 
 
-![Kapture 2021-02-20 at 10.35.13](https://kuimo-markdown-pic.oss-cn-hangzhou.aliyuncs.com/Kapture 2021-02-20 at 10.35.13.gif)
+![demo](demo.gif)
 
 ## 前提
 
@@ -100,7 +100,7 @@ const title = i18n.s('标题', 'myNs');
 
 ## 流程图
 
-![image-20210219175826813](demo.gif)
+![image-20210219175826813](https://kuimo-markdown-pic.oss-cn-hangzhou.aliyuncs.com/image-20210219175826813.png)
 
 
 
