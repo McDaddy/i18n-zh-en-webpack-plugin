@@ -6,7 +6,7 @@ let eventHub;
 let nsSourceMap;
 let targetVariable;
 
-function createTransformer(sourceMap, exclude) {
+function createTransformer(sourceMap, defaultNs, defaultLng, exclude) {
   nsSourceMap = sourceMap;
   eventHub.on('onLocaleFileChange', (sm) => {
     nsSourceMap = sm;
@@ -37,24 +37,24 @@ function createTransformer(sourceMap, exclude) {
             const { arguments: args } = callExpression;
             const params = args.map((arg) => arg.text);
             const zhWord = params[0];
-            const ns = params[1] || 'default';
+            const ns = params[1] || defaultNs;
             const nsResources = nsSourceMap[ns] || {};
             const enWord = nsResources[zhWord];
             if (enWord) {
-              let nsEnWord = enWord;
-              if (ns !== 'default') {
-                nsEnWord = `${ns}:${enWord}`;
+              let nsWordValue = defaultLng === 'en' ? enWord : zhWord;
+              if (ns !== defaultNs) {
+                nsWordValue = `${ns}:${defaultLng === 'en' ? enWord : zhWord}`;
               }
               // 替换源文件
               // i18n.s('数据源名称', 'dl') => i18n.t('dl:data source name')
               // i18n.s('更新时间') => i18n.t('update time')
               const newNode = factory.createCallExpression(
                 factory.createPropertyAccessExpression(
-                  factory.createIdentifier('i18n'),
+                  factory.createIdentifier(targetVariable),
                   factory.createIdentifier('t'),
                 ),
                 undefined,
-                [factory.createStringLiteral(nsEnWord)],
+                [factory.createStringLiteral(nsWordValue)],
               );
               return newNode;
             } else if (process.env.NODE_ENV === 'production') {
