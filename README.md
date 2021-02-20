@@ -16,7 +16,7 @@
 
 
 
-![demo.gif](https://kuimo-markdown-pic.oss-cn-hangzhou.aliyuncs.com/Kapture 2021-02-19 at 17.16.59.gif)
+![Kapture 2021-02-20 at 10.35.13](https://kuimo-markdown-pic.oss-cn-hangzhou.aliyuncs.com/Kapture 2021-02-20 at 10.35.13.gif)
 
 ## 前提
 
@@ -127,7 +127,7 @@ const title = i18n.s('标题', 'ns');
 ## 注意
 
 1. 不支持带变量的国际化如 `i18n.t('add {name}', { name: i18n.t('caller') })`
-2. 不支持运行时的变量翻译 如： `i18n.s(x === 'x' ? '哈哈': '嘿嘿')` 或 `i18n.s(variable)`
+2. 不支持运行时的变量翻译 如： `i18n.s(isMale ? '他': '她')` 或 `i18n.s(variable)`
 3. 手动修改locale文件不会自动发起重编译，此时刷新页面并不会出现修改后的内容，此时请任意添加一个新词翻译或者重启项目来触发重编译
 4. 在很多情况下，两个不同的中文可能会对应相同的自动翻译结果，此时插件会提示翻译发生了冲突，并将新翻译的词后加上`__CONFLICT__`，如下图。此时就需要使用者手动去修改locale文件。
 
