@@ -16,37 +16,22 @@ const getOptions = (ns, customProps) => ({
   removeUnusedKeys: true,
   sort: true,
   func: { // 此配置不能改变
+    list: ['i18next.t', 'i18n.t'],
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
   },
-  trans: { // 用于组件形式 i18next-react
-    component: 'Trans',
-    i18nKey: 'i18nKey',
-    defaultsKey: 'defaults',
-    extensions: [], // 禁用
-    fallbackKey(_ns, value) {
-      return value;
-    },
-    acorn: {
-      ecmaVersion: 10, // defaults to 10
-      sourceType: 'module', // defaults to 'module'
-    },
-  },
-  defaultLng: 'en',
   defaultNs: 'default',
   defaultValue: '__NOT_TRANSLATED__',
   resource: {
     jsonIndent: 2,
     lineEnding: '\n',
   },
-  nsSeparator: ':', // namespace separator 此配置不能改变
-  keySeparator: false, // key separator if working with a flat json, it's recommended to set keySeparator to false
-  interpolation: {
-    prefix: '{{',
-    suffix: '}}',
-  },
   ...customProps,
   lngs: ['en', 'zh'], // 此配置不能改变
   ns,
+  defaultLng: 'en',
+  trans: false,
+  keySeparator: false, // key separator if working with a flat json, it's recommended to set keySeparator to false
+  nsSeparator: ':', // namespace separator 此配置不能改变
 });
 
 function revertObjectKV(obj) {
