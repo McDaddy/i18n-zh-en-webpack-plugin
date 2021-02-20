@@ -61,7 +61,7 @@ const autoI18nPlugin = (options) => {
   nsList = options.ns || ['default'];
   defaultNs = options.defaultNs || nsList[0];
   nsSourceMap = prepareLocaleSource(localePath, defaultLng);
-  return i18nReplacePlugin(eventHub, { localePath, targetVariable })(nsSourceMap, defaultNs, exclude);
+  return i18nReplacePlugin(eventHub, { localePath, targetVariable })(nsSourceMap, defaultNs, defaultLng, exclude);
 };
 
 const fileList = [];
