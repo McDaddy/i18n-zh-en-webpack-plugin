@@ -58,8 +58,8 @@ const autoI18nPlugin = (options) => {
   customProps = options.customProps || {};
   apiKey = options.apiKey;
   defaultLng = options.defaultLng || 'en';
-  defaultNs = options.defaultNs || 'default';
-  nsList = options.ns || [defaultNs];
+  nsList = options.ns || ['default'];
+  defaultNs = options.defaultNs || nsList[0];
   nsSourceMap = prepareLocaleSource(localePath, defaultLng);
   return i18nReplacePlugin(eventHub, { localePath, targetVariable })(nsSourceMap, defaultNs, exclude);
 };
