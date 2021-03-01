@@ -1,3 +1,4 @@
+const { default: chalk } = require('chalk');
 const ts = require('typescript');
 
 const { factory } = ts;
@@ -37,6 +38,10 @@ function createTransformer(sourceMap, defaultNs, defaultLng, exclude) {
             const { arguments: args } = callExpression;
             const params = args.map((arg) => arg.text);
             const zhWord = params[0];
+            if (!zhWord) {
+              zhWord === undefined && console.log(chalk.red('ts-auto-i18n-plugin 不支持运行时变量'));
+              return node;
+            }
             const ns = params[1] || defaultNs;
             const nsResources = nsSourceMap[ns] || {};
             const enWord = nsResources[zhWord];
