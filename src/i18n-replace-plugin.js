@@ -1,4 +1,4 @@
-const { default: chalk } = require('chalk');
+const chalk = require('chalk');
 const ts = require('typescript');
 
 const { factory } = ts;
@@ -36,10 +36,14 @@ function createTransformer(sourceMap, defaultNs, defaultLng, exclude) {
             identifierExpression.escapedText === targetVariable
           ) {
             const { arguments: args } = callExpression;
+            const isInvalid = args.some((arg) => arg.kind !== ts.SyntaxKind.StringLiteral);
+            if (isInvalid) {
+              console.log(chalk.red(`ts-auto-i18n-plugin 不支持运行时变量：${ callExpression.getFullText()}`));
+              return node;
+            }
             const params = args.map((arg) => arg.text);
             const zhWord = params[0];
             if (!zhWord) {
-              zhWord === undefined && console.log(chalk.red('ts-auto-i18n-plugin 不支持运行时变量'));
               return node;
             }
             const ns = params[1] || defaultNs;
