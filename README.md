@@ -22,7 +22,7 @@
 
 - 工程必须使用[i18next](https://www.npmjs.com/package/i18next)作为国际化框架
 - `typescript` 4.x
-- 使用`ts-loader`作为代码转换loader
+- 使用`ts-loader`作为代码转换loader，且版本必须大于8.x
 - 只处理中文转英文的国际化
 
 
